@@ -1,1 +1,1859 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0B0F17" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>StudyTube — JEE &amp; NEET Distraction-Free Learning</title>
+  <style>
+    :root {
+      --bg: #0B0F17;
+      --surface: #131B2E;
+      --surface-elevated: #1E293B;
+      --surface-hover: #26354D;
+      --border: #1E293B;
+      --primary: #38BDF8;
+      --primary-dim: rgba(56, 189, 248, 0.14);
+      --accent: #10B981;
+      --accent-dim: rgba(16, 185, 129, 0.15);
+      --danger: #F43F5E;
+      --danger-dim: rgba(244, 63, 94, 0.15);
+      --warning: #F59E0B;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-subtle: #64748B;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-pill: 9999px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.45;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sticky Top Navigation */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 15, 23, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #0284C7, #38BDF8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(56, 189, 248, 0.25);
+      flex-shrink: 0;
+    }
+
+    .brand-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #0B0F17;
+    }
+
+    .brand-text-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.08rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: var(--primary-dim);
+      color: var(--primary);
+      letter-spacing: 0.04em;
+    }
+
+    .brand-sub {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Study Focus Timer Pill */
+    .study-timer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-dim);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .study-timer.paused {
+      background: var(--surface-elevated);
+      border-color: #334155;
+      color: var(--text-muted);
+    }
+
+    .study-timer:active {
+      transform: scale(0.96);
+    }
+
+    .timer-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    .study-timer.paused .timer-dot {
+      background: var(--text-subtle);
+      box-shadow: none;
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .icon-btn:hover, .icon-btn:active {
+      background: var(--surface-elevated);
+      border-color: var(--primary);
+    }
+
+    .icon-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Search Row */
+    .search-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 2;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 9px 34px 9px 36px;
+      color: var(--text);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-subtle);
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      background: var(--surface-elevated);
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      display: none;
+      padding: 2px 6px;
+    }
+
+    /* Filter Chips Bar */
+    .chips-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 2px 0 4px 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .chips-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      padding: 6px 13px;
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .chip:hover {
+      background: var(--surface-elevated);
+      color: var(--text);
+    }
+
+    .chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #0B0F17;
+      font-weight: 700;
+    }
+
+    .chip-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+      flex-shrink: 0;
+      margin: 0 2px;
+    }
+
+    /* Main Container */
+    .main-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    /* Status & Quota Banner */
+    .status-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      border-radius: var(--radius-md);
+      background: rgba(19, 27, 46, 0.75);
+      border: 1px solid var(--border);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .status-strip-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .shield-pill {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Alert / Error Banner */
+    .alert-box {
+      background: var(--danger-dim);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alert-box.visible {
+      display: flex;
+    }
+
+    .alert-title {
+      font-weight: 700;
+      color: #FDA4AF;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-desc {
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .alert-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 9px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #0B0F17;
+    }
+
+    .btn-secondary {
+      background: var(--surface-elevated);
+      color: var(--text);
+      border: 1px solid #334155;
+    }
+
+    /* Video Grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
+    }
+
+    .video-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .video-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #080B11;
+      overflow: hidden;
+    }
+
+    .thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .duration-badge {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      background: rgba(11, 15, 23, 0.9);
+      color: #F8FAFC;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .subject-tag-badge {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      background: rgba(11, 15, 23, 0.85);
+      color: var(--primary);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      backdrop-filter: blur(4px);
+    }
+
+    .card-body {
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .video-title {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.38;
+    }
+
+    .video-meta {
+      margin-top: auto;
+      padding-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .channel-name {
+      color: #CBD5E1;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .verified-dot {
+      width: 13px;
+      height: 13px;
+      fill: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .stats-line {
+      color: var(--text-subtle);
+      font-size: 0.75rem;
+    }
+
+    /* Watch View */
+    .watch-view {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .watch-view.active {
+      display: flex;
+    }
+
+    .back-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .player-container {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .player-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .watch-info {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .watch-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .watch-subrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    .watch-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .mini-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      background: var(--primary-dim);
+      color: var(--primary);
+    }
+
+    .related-header {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    /* Skeleton Loader */
+    .skeleton-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      padding-bottom: 14px;
+    }
+
+    .skeleton-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(90deg, #131B2E 25%, #1E293B 50%, #131B2E 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+
+    .skeleton-line {
+      height: 12px;
+      margin: 12px 14px 0;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #131B2E 25%, #1E293B 50%, #131B2E 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+
+    .skeleton-line.short {
+      width: 60%;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-lg);
+      margin-top: 12px;
+    }
+
+    .empty-state h3 {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 420px;
+      margin: 0 auto 16px;
+    }
+
+    /* Settings Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(5, 8, 14, 0.84);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 460px;
+      background: var(--surface);
+      border: 1px solid #2A3A56;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .field-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #CBD5E1;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .api-input {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      border: 1px solid #334155;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .api-input:focus {
+      border-color: var(--primary);
+    }
+
+    .whitelist-preview {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      max-height: 135px;
+      overflow-y: auto;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+      .brand-sub {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="top-row">
+      <div class="brand" id="homeBrandBtn" title="Return to StudyTube Feed">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="brand-text-wrap">
+          <div class="brand-title">
+            StudyTube <span class="brand-badge">JEE • NEET</span>
+          </div>
+          <div class="brand-sub">Whitelist Only • Zero Shorts</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="study-timer" id="studyTimerPill" title="Tap to pause or resume daily Study Focus timer">
+          <span class="timer-dot"></span>
+          <span id="studyTimerText">00m today</span>
+        </div>
+
+        <button class="icon-btn" id="refreshFeedBtn" title="Refresh Whitelisted Feed" aria-label="Refresh Feed">
+          <svg viewBox="0 0 24 24">
+            <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" id="openSettingsBtn" title="YouTube API Key &amp; Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input
+          type="search"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search Physics, Organic Chemistry, Calculus, Biology within whitelisted channels…"
+          autocomplete="off"
+        />
+        <button class="clear-search-btn" id="clearSearchBtn" aria-label="Clear search">&times;</button>
+      </div>
+    </div>
+
+    <nav class="chips-bar" id="chipsBar" aria-label="Subject and Channel Filters"></nav>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-container">
+    <div class="status-strip">
+      <div class="status-strip-left">
+        <span class="shield-pill">&#10003; Shorts &amp; Live Blocked (&gt;60s only)</span>
+        <span>&bull;</span>
+        <span id="feedStatusText">Ready</span>
+      </div>
+      <span id="channelCountText">11 Whitelisted Channels</span>
+    </div>
+
+    <!-- Error / Quota Alert Box -->
+    <section class="alert-box" id="alertBox" role="alert">
+      <div class="alert-title" id="alertTitle">API Notice</div>
+      <div class="alert-desc" id="alertDesc"></div>
+      <div class="alert-actions">
+        <button class="btn btn-primary" id="alertSettingsBtn">Update API Key</button>
+        <button class="btn btn-secondary" id="alertRetryBtn">Retry Now</button>
+      </div>
+    </section>
+
+    <!-- FEED VIEW -->
+    <section id="feedView">
+      <div class="video-grid" id="videoGrid"></div>
+    </section>
+
+    <!-- WATCH VIEW -->
+    <section class="watch-view" id="watchView">
+      <div class="back-bar">
+        <button class="btn btn-secondary" id="backToFeedBtn">&larr; Back to Lecture Feed</button>
+        <span style="font-size:0.78rem;color:var(--accent);font-family:var(--font-mono);">
+          &#9679; Official YouTube Embedded Player
+        </span>
+      </div>
+
+      <div class="player-container" id="playerContainer"></div>
+
+      <div class="watch-info" id="watchInfo"></div>
+
+      <div class="related-header">
+        <span>Related Lectures from Whitelisted Channels</span>
+        <span style="font-size:0.75rem;color:var(--text-muted);">Strictly Whitelisted</span>
+      </div>
+      <div class="video-grid" id="relatedGrid"></div>
+    </section>
+  </main>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal-backdrop" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+    <div class="modal-card">
+      <div class="modal-title">
+        <span id="settingsModalTitle">YouTube Data API v3 Key</span>
+        <button class="icon-btn" id="closeSettingsBtn" style="width:32px;height:32px;" aria-label="Close Settings">&times;</button>
+      </div>
+      <p class="modal-desc">
+        StudyTube connects directly to the official <strong>YouTube Data API v3</strong> to fetch full-length lectures from whitelisted JEE &amp; NEET channels. Your key is stored locally in <code>localStorage</code>.
+      </p>
+
+      <div>
+        <label class="field-label" for="apiKeyInput">Paste YouTube API Key</label>
+        <input
+          type="password"
+          id="apiKeyInput"
+          class="api-input"
+          placeholder="AIzaSy..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <div>
+        <div class="field-label" style="margin-bottom:6px;">Whitelisted Channels (Auto-Cached IDs)</div>
+        <div class="whitelist-preview" id="whitelistPreview"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="clearCacheBtn" title="Clear cached videos and channel IDs">Reset Cache</button>
+        <button class="btn btn-primary" id="saveApiKeyBtn">Save Key &amp; Fetch Lectures</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /********************************************************************
+     * 1. EASY-TO-EDIT WHITELISTED JEE & NEET CHANNELS ARRAY
+     ********************************************************************/
+    const WHITELISTED_CHANNELS = [
+      {
+        key: "pw_alakh",
+        name: "Physics Wallah - Alakh Pandey",
+        shortName: "PW Alakh Pandey",
+        handle: "@PhysicsWallah",
+        searchQuery: "Physics Wallah Alakh Pandey",
+        defaultChannelId: "UCiGyWN6DEbnj2alu7iapuKQ",
+        exam: "BOTH",
+        defaultSubjects: ["Physics", "Chemistry", "JEE", "NEET"]
+      },
+      {
+        key: "pw_jee",
+        name: "JEE Wallah (PW JEE)",
+        shortName: "PW JEE",
+        handle: "@PW-JEEWallah",
+        searchQuery: "JEE Wallah Physics Wallah",
+        defaultChannelId: "UCVJU_IChPMOe8RWkdVQjtfQ",
+        exam: "JEE",
+        defaultSubjects: ["Physics", "Chemistry", "Maths", "JEE"]
+      },
+      {
+        key: "competition_wallah",
+        name: "Competition Wallah (PW NEET)",
+        shortName: "Competition Wallah",
+        handle: "@PW-NEETWallah",
+        searchQuery: "Competition Wallah NEET",
+        defaultChannelId: "UCD16eo98AXl-9T61Xd711kQ",
+        exam: "NEET",
+        defaultSubjects: ["Physics", "Chemistry", "Biology", "NEET"]
+      },
+      {
+        key: "pw_hindi",
+        name: "PW Hindi Medium",
+        shortName: "PW Hindi Medium",
+        handle: "@PWHindiMedium",
+        searchQuery: "PW Hindi Medium JEE NEET",
+        defaultChannelId: "",
+        exam: "BOTH",
+        defaultSubjects: ["Physics", "Chemistry", "Maths", "Biology", "JEE", "NEET"]
+      },
+      {
+        key: "ncert_wallah",
+        name: "NCERT Wallah (PW)",
+        shortName: "NCERT Wallah",
+        handle: "@NCERTWallahPW",
+        searchQuery: "NCERT Wallah Physics Wallah",
+        defaultChannelId: "",
+        exam: "BOTH",
+        defaultSubjects: ["Physics", "Chemistry", "Maths", "Biology", "JEE", "NEET"]
+      },
+      {
+        key: "unacademy_jee",
+        name: "Unacademy JEE",
+        shortName: "Unacademy JEE",
+        handle: "@UnacademyJEE",
+        searchQuery: "Unacademy JEE",
+        defaultChannelId: "UCZNNx4KYlutJfGWbDMpnVlQ",
+        exam: "JEE",
+        defaultSubjects: ["Physics", "Chemistry", "Maths", "JEE"]
+      },
+      {
+        key: "unacademy_neet",
+        name: "Unacademy NEET",
+        shortName: "Unacademy NEET",
+        handle: "@UnacademyNEET",
+        searchQuery: "Unacademy NEET",
+        defaultChannelId: "UCdQwYksctqqiRwqp3PiJMWA",
+        exam: "NEET",
+        defaultSubjects: ["Physics", "Chemistry", "Biology", "NEET"]
+      },
+      {
+        key: "vedantu_jee",
+        name: "Vedantu JEE",
+        shortName: "Vedantu JEE",
+        handle: "@JEEVedantu",
+        searchQuery: "Vedantu JEE",
+        defaultChannelId: "UC91RZv71f8p0VV2gaFI07pg",
+        exam: "JEE",
+        defaultSubjects: ["Physics", "Chemistry", "Maths", "JEE"]
+      },
+      {
+        key: "vedantu_neet",
+        name: "Vedantu NEET Made Ejee",
+        shortName: "Vedantu NEET",
+        handle: "@NEETVedantu",
+        searchQuery: "Vedantu NEET Made Ejee",
+        defaultChannelId: "UCqaq3Cwa7m_E3ff2TvGr9dw",
+        exam: "NEET",
+        defaultSubjects: ["Physics", "Chemistry", "Biology", "NEET"]
+      },
+      {
+        key: "allen",
+        name: "ALLEN Career Institute",
+        shortName: "ALLEN",
+        handle: "@ALLENCareerInstituteofficial",
+        searchQuery: "ALLEN Career Institute JEE NEET",
+        defaultChannelId: "UCLLM4a26397592c3mD7d9Jw",
+        exam: "BOTH",
+        defaultSubjects: ["Physics", "Chemistry", "Maths", "Biology", "JEE", "NEET"]
+      },
+      {
+        key: "motion_jee",
+        name: "Motion JEE",
+        shortName: "Motion JEE",
+        handle: "@Motion_Online",
+        searchQuery: "Motion Education NV Sir JEE",
+        defaultChannelId: "UC8cd3013C234a5D8b5B3b8w",
+        exam: "JEE",
+        defaultSubjects: ["Physics", "Chemistry", "Maths", "JEE"]
+      }
+    ];
+
+    const CORE_CHIPS = ["All", "Physics", "Chemistry", "Maths", "Biology", "JEE", "NEET"];
+    const STORAGE_KEYS = {
+      API_KEY: "studytube_yt_api_key_v1",
+      CHANNEL_MAP: "studytube_channel_ids_v1",
+      VIDEO_CACHE: "studytube_videos_cache_v1",
+      LAST_SYNC: "studytube_last_sync_ts_v1",
+      STUDY_TIMER: "studytube_study_timer_v1"
+    };
+    const AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+    const YT_API_BASE = "https://www.googleapis.com/youtube/v3";
+
+    /********************************************************************
+     * 2. APPLICATION STATE
+     ********************************************************************/
+    let state = {
+      apiKey: localStorage.getItem(STORAGE_KEYS.API_KEY) || "",
+      channelMap: loadJson(STORAGE_KEYS.CHANNEL_MAP, {}),
+      videos: loadJson(STORAGE_KEYS.VIDEO_CACHE, []),
+      lastSync: Number(localStorage.getItem(STORAGE_KEYS.LAST_SYNC) || 0),
+      activeChip: "All",
+      searchQuery: "",
+      activeVideo: null,
+      isFetching: false,
+      timerRunning: true,
+      studiedSecondsToday: 0
+    };
+
+    function loadJson(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function saveJson(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {
+        console.warn("Storage write error:", e);
+      }
+    }
+
+    /********************************************************************
+     * 3. STUDY FOCUS DAILY TIMER
+     ********************************************************************/
+    function getTodayDateString() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    }
+
+    function initStudyTimer() {
+      const saved = loadJson(STORAGE_KEYS.STUDY_TIMER, null);
+      const today = getTodayDateString();
+      if (saved && saved.date === today) {
+        state.studiedSecondsToday = Number(saved.seconds) || 0;
+        state.timerRunning = saved.running !== false;
+      } else {
+        state.studiedSecondsToday = 0;
+        state.timerRunning = true;
+        persistStudyTimer();
+      }
+      renderStudyTimer();
+
+      setInterval(() => {
+        if (!state.timerRunning || document.hidden) return;
+        const currentDay = getTodayDateString();
+        const stored = loadJson(STORAGE_KEYS.STUDY_TIMER, {});
+        if (stored.date && stored.date !== currentDay) {
+          state.studiedSecondsToday = 0;
+        }
+        state.studiedSecondsToday += 1;
+        if (state.studiedSecondsToday % 5 === 0) {
+          persistStudyTimer();
+        }
+        renderStudyTimer();
+      }, 1000);
+    }
+
+    function persistStudyTimer() {
+      saveJson(STORAGE_KEYS.STUDY_TIMER, {
+        date: getTodayDateString(),
+        seconds: state.studiedSecondsToday,
+        running: state.timerRunning
+      });
+    }
+
+    function renderStudyTimer() {
+      const pill = document.getElementById("studyTimerPill");
+      const textEl = document.getElementById("studyTimerText");
+      const hrs = Math.floor(state.studiedSecondsToday / 3600);
+      const mins = Math.floor((state.studiedSecondsToday % 3600) / 60);
+      const secs = state.studiedSecondsToday % 60;
+      const formatted = hrs > 0
+        ? `${hrs}h ${String(mins).padStart(2, "0")}m today`
+        : `${String(mins).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s today`;
+      textEl.textContent = formatted;
+      pill.classList.toggle("paused", !state.timerRunning);
+    }
+
+    /********************************************************************
+     * 4. YOUTUBE DATA API v3 FETCHING & STRICT WHITELIST FILTERING
+     ********************************************************************/
+    function parseIsoDurationToSeconds(iso) {
+      if (!iso || typeof iso !== "string") return 0;
+      const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+      if (!match) return 0;
+      const hours = parseInt(match[1] || "0", 10);
+      const minutes = parseInt(match[2] || "0", 10);
+      const seconds = parseInt(match[3] || "0", 10);
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+
+    function formatDurationBadge(seconds) {
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      if (hrs > 0) {
+        return `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+      }
+      return `${mins}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function formatViewCount(views) {
+      const num = Number(views || 0);
+      if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, "")}M views`;
+      if (num >= 1_000) return `${(num / 1_000).toFixed(1).replace(/\.0$/, "")}K views`;
+      return `${num} views`;
+    }
+
+    function formatRelativeDaysAgo(isoDate) {
+      const publishedMs = Date.parse(isoDate);
+      if (isNaN(publishedMs)) return "Recently";
+      const diffSeconds = Math.max(1, Math.floor((Date.now() - publishedMs) / 1000));
+      const days = Math.floor(diffSeconds / 86400);
+      if (days === 0) {
+        const hours = Math.floor(diffSeconds / 3600);
+        if (hours <= 0) return "Just now";
+        return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+      }
+      if (days === 1) return "1 day ago";
+      if (days < 30) return `${days} days ago`;
+      const months = Math.floor(days / 30);
+      if (months < 12) return `${months} month${months === 1 ? "" : "s"} ago`;
+      const years = Math.floor(days / 365);
+      return `${years} year${years === 1 ? "" : "s"} ago`;
+    }
+
+    function classifySubjectsAndExams(title, description, channelConfig) {
+      const text = `${title} ${description || ""}`.toLowerCase();
+      const tags = new Set();
+
+      if (/physics|electrostatics|mechanics|optics|thermodynamics|kinematics|magnetism|current|modern physics|gravitation|waves|shm|rotational|ac |semiconductor|capacitor/.test(text)) {
+        tags.add("Physics");
+      }
+      if (/chemistry|organic|inorganic|physical chem|mole|periodic|equilibrium|thermochemistry|electrochemistry|coordination|hydrocarbon|aldehyde|amine|polymer|atomic structure|chemical bonding/.test(text)) {
+        tags.add("Chemistry");
+      }
+      if (/math|maths|mathematics|calculus|algebra|trigonometry|coordinate|matrix|matrices|determinant|vector|3d|probability|integration|differentiation|conic|complex number/.test(text)) {
+        tags.add("Maths");
+      }
+      if (/biology|botany|zoology|genetics|ecology|human physiology|plant physiology|cell|reproduction|biotechnology|evolution|anatomy|morphology|biomolecules/.test(text)) {
+        tags.add("Biology");
+      }
+
+      if (/jee|iit|mains|advanced|bitsat/.test(text) || channelConfig.exam === "JEE") {
+        tags.add("JEE");
+      }
+      if (/neet|aiims|medical|ncert biology/.test(text) || channelConfig.exam === "NEET") {
+        tags.add("NEET");
+      }
+
+      if (tags.size === 0) {
+        (channelConfig.defaultSubjects || []).forEach(t => tags.add(t));
+      } else if (!tags.has("JEE") && !tags.has("NEET")) {
+        if (channelConfig.exam === "BOTH") {
+          tags.add("JEE");
+          tags.add("NEET");
+        } else {
+          tags.add(channelConfig.exam);
+        }
+      }
+
+      return Array.from(tags);
+    }
+
+    async function ytFetchJson(endpoint, params) {
+      const url = new URL(`${YT_API_BASE}/${endpoint}`);
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, v);
+      });
+      url.searchParams.set("key", state.apiKey.trim());
+
+      const response = await fetch(url.toString());
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const reason = data?.error?.errors?.[0]?.reason || "";
+        const message = data?.error?.message || `HTTP ${response.status}`;
+        const err = new Error(message);
+        err.status = response.status;
+        err.reason = reason;
+        throw err;
+      }
+      return data;
+    }
+
+    /**
+     * Resolve each channel's ID & "uploads" playlist ID ONCE using channels.list
+     * (or fallback search), then cache permanently in localStorage to save quota.
+     */
+    async function resolveChannelEntry(ch) {
+      const cached = state.channelMap[ch.key];
+      if (cached && cached.channelId && cached.uploadsPlaylistId) {
+        return cached;
+      }
+
+      // 1. Try channels.list with forHandle (1 quota unit)
+      if (ch.handle) {
+        try {
+          const handleRes = await ytFetchJson("channels", {
+            part: "id,snippet,contentDetails",
+            forHandle: ch.handle
+          });
+          const item = handleRes.items && handleRes.items[0];
+          if (item && item.id) {
+            const uploadsId = item.contentDetails?.relatedPlaylists?.uploads || ("UU" + item.id.slice(2));
+            const entry = {
+              channelId: item.id,
+              uploadsPlaylistId: uploadsId,
+              resolvedTitle: item.snippet?.title || ch.name
+            };
+            state.channelMap[ch.key] = entry;
+            saveJson(STORAGE_KEYS.CHANNEL_MAP, state.channelMap);
+            return entry;
+          }
+        } catch (err) {
+          if (err.reason === "keyInvalid" || err.reason === "quotaExceeded" || err.status === 400 || err.status === 403) {
+            throw err;
+          }
+        }
+      }
+
+      // 2. Try known defaultChannelId via channels.list (1 quota unit)
+      if (ch.defaultChannelId && ch.defaultChannelId.startsWith("UC")) {
+        try {
+          const idRes = await ytFetchJson("channels", {
+            part: "id,snippet,contentDetails",
+            id: ch.defaultChannelId
+          });
+          const item = idRes.items && idRes.items[0];
+          if (item && item.id) {
+            const uploadsId = item.contentDetails?.relatedPlaylists?.uploads || ("UU" + item.id.slice(2));
+            const entry = {
+              channelId: item.id,
+              uploadsPlaylistId: uploadsId,
+              resolvedTitle: item.snippet?.title || ch.name
+            };
+            state.channelMap[ch.key] = entry;
+            saveJson(STORAGE_KEYS.CHANNEL_MAP, state.channelMap);
+            return entry;
+          }
+        } catch (err) {
+          if (err.reason === "keyInvalid" || err.reason === "quotaExceeded") throw err;
+        }
+      }
+
+      // 3. Fallback single search for channel (cached forever once resolved)
+      const searchRes = await ytFetchJson("search", {
+        part: "snippet",
+        type: "channel",
+        maxResults: 1,
+        q: ch.searchQuery
+      });
+      const found = searchRes.items && searchRes.items[0];
+      const channelId = found?.snippet?.channelId || found?.id?.channelId;
+      if (channelId && channelId.startsWith("UC")) {
+        const entry = {
+          channelId: channelId,
+          uploadsPlaylistId: "UU" + channelId.slice(2),
+          resolvedTitle: found.snippet?.title || ch.name
+        };
+        state.channelMap[ch.key] = entry;
+        saveJson(STORAGE_KEYS.CHANNEL_MAP, state.channelMap);
+        return entry;
+      }
+
+      return null;
+    }
+
+    async function fetchAndFilterWhitelistedFeed(force = false) {
+      if (!state.apiKey || !state.apiKey.trim()) {
+        openSettingsModal();
+        showFeedStatus("Paste your YouTube Data API v3 key to load lectures");
+        return;
+      }
+
+      if (state.isFetching) return;
+      state.isFetching = true;
+      hideAlert();
+      showFeedStatus("Syncing whitelisted JEE & NEET channels…");
+
+      if (state.videos.length === 0) {
+        renderSkeletons();
+      }
+
+      try {
+        // Step 1: Resolve uploads playlists for all whitelisted channels
+        const resolvedChannels = [];
+        for (const ch of WHITELISTED_CHANNELS) {
+          const resolved = await resolveChannelEntry(ch);
+          if (resolved) {
+            resolvedChannels.push({ config: ch, resolved });
+          }
+        }
+        renderWhitelistPreview();
+
+        // Step 2: Fetch latest uploads from each channel's uploads playlist
+        const playlistFetchPromises = resolvedChannels.map(async ({ config, resolved }) => {
+          try {
+            const plData = await ytFetchJson("playlistItems", {
+              part: "snippet,contentDetails",
+              playlistId: resolved.uploadsPlaylistId,
+              maxResults: 12
+            });
+            return (plData.items || []).map(item => ({
+              videoId: item.contentDetails?.videoId || item.snippet?.resourceId?.videoId,
+              channelConfig: config,
+              resolvedChannelId: resolved.channelId
+            })).filter(x => Boolean(x.videoId));
+          } catch (e) {
+            if (e.reason === "keyInvalid" || e.reason === "quotaExceeded") throw e;
+            return [];
+          }
+        });
+
+        const nestedItems = await Promise.all(playlistFetchPromises);
+        const rawEntries = nestedItems.flat();
+
+        // Deduplicate video IDs
+        const uniqueMap = new Map();
+        for (const entry of rawEntries) {
+          if (!uniqueMap.has(entry.videoId)) {
+            uniqueMap.set(entry.videoId, entry);
+          }
+        }
+        const uniqueVideoIds = Array.from(uniqueMap.keys());
+
+        if (uniqueVideoIds.length === 0) {
+          throw new Error("No videos returned from whitelisted playlists.");
+        }
+
+        // Step 3: Batch call videos.list (up to 50 IDs per call) to inspect durations, live status, and stats
+        const detailedVideos = [];
+        for (let i = 0; i < uniqueVideoIds.length; i += 50) {
+          const chunk = uniqueVideoIds.slice(i, i + 50);
+          const vData = await ytFetchJson("videos", {
+            part: "snippet,contentDetails,statistics,liveStreamingDetails",
+            id: chunk.join(",")
+          });
+          if (vData.items) {
+            detailedVideos.push(...vData.items);
+          }
+        }
+
+        // Step 4: STRICT FILTERING — Remove Shorts (<= 60s or #shorts), live streams, and upcoming streams
+        const cleanVideos = [];
+        for (const v of detailedVideos) {
+          const snippet = v.snippet || {};
+          const title = snippet.title || "";
+          const description = snippet.description || "";
+          const durationIso = v.contentDetails?.duration || "";
+          const durationSeconds = parseIsoDurationToSeconds(durationIso);
+
+          // 1. Reject 60 seconds or shorter
+          if (durationSeconds <= 60) continue;
+
+          // 2. Reject anything with #shorts or #short in title or description
+          if (/#shorts?\b/i.test(title) || /#shorts?\b/i.test(description)) continue;
+
+          // 3. Reject live and upcoming streams
+          const broadcast = (snippet.liveBroadcastContent || "none").toLowerCase();
+          if (broadcast === "live" || broadcast === "upcoming") continue;
+          if (v.liveStreamingDetails && !v.liveStreamingDetails.actualEndTime) continue;
+
+          const metaEntry = uniqueMap.get(v.id);
+          if (!metaEntry) continue; // Strictly whitelisted channels only
+
+          const chConfig = metaEntry.channelConfig;
+          const thumb =
+            snippet.thumbnails?.maxres?.url ||
+            snippet.thumbnails?.high?.url ||
+            snippet.thumbnails?.medium?.url ||
+            `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`;
+
+          const tags = classifySubjectsAndExams(title, description, chConfig);
+
+          cleanVideos.push({
+            id: v.id,
+            title: title,
+            channelKey: chConfig.key,
+            channelId: snippet.channelId || metaEntry.resolvedChannelId,
+            channelTitle: chConfig.shortName || snippet.channelTitle || chConfig.name,
+            fullChannelName: chConfig.name,
+            thumbnail: thumb,
+            publishedAt: snippet.publishedAt || new Date().toISOString(),
+            durationSeconds: durationSeconds,
+            durationText: formatDurationBadge(durationSeconds),
+            viewCount: Number(v.statistics?.viewCount || 0),
+            viewsText: formatViewCount(v.statistics?.viewCount || 0),
+            tags: tags
+          });
+        }
+
+        // Sort newest first
+        cleanVideos.sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+
+        state.videos = cleanVideos;
+        state.lastSync = Date.now();
+        saveJson(STORAGE_KEYS.VIDEO_CACHE, state.videos);
+        localStorage.setItem(STORAGE_KEYS.LAST_SYNC, String(state.lastSync));
+
+        renderFeed();
+        updateLastSyncLabel();
+      } catch (err) {
+        handleApiError(err);
+        renderFeed();
+      } finally {
+        state.isFetching = false;
+      }
+    }
+
+    function handleApiError(err) {
+      const reason = (err.reason || "").toLowerCase();
+      const msg = err.message || "Unable to reach YouTube Data API v3.";
+      if (reason.includes("keyinvalid") || err.status === 400 || msg.toLowerCase().includes("api key not valid")) {
+        showAlert(
+          "Invalid YouTube API Key",
+          "The API key you entered was rejected by YouTube Data API v3. Please check that your key is accurate and has 'YouTube Data API v3' enabled in Google Cloud Console."
+        );
+      } else if (reason.includes("quota") || msg.toLowerCase().includes("quota")) {
+        showAlert(
+          "Daily YouTube API Quota Exceeded",
+          "Your YouTube Data API v3 key has reached its daily quota limit. StudyTube is displaying your locally cached lectures so you can continue studying without interruption."
+        );
+      } else {
+        showAlert(
+          "Could Not Sync Latest Lectures",
+          `${msg}. Showing cached whitelisted videos if available.`
+        );
+      }
+      showFeedStatus("Offline / Cached Mode");
+    }
+
+    function showAlert(title, desc) {
+      const box = document.getElementById("alertBox");
+      document.getElementById("alertTitle").textContent = title;
+      document.getElementById("alertDesc").textContent = desc;
+      box.classList.add("visible");
+    }
+
+    function hideAlert() {
+      document.getElementById("alertBox").classList.remove("visible");
+    }
+
+    function showFeedStatus(text) {
+      document.getElementById("feedStatusText").textContent = text;
+    }
+
+    function updateLastSyncLabel() {
+      if (!state.lastSync) {
+        showFeedStatus("Not synced yet");
+        return;
+      }
+      const mins = Math.max(0, Math.floor((Date.now() - state.lastSync) / 60000));
+      const label = mins === 0 ? "Updated just now" : `Updated ${mins}m ago`;
+      showFeedStatus(`${state.videos.length} lectures • ${label}`);
+    }
+
+    /********************************************************************
+     * 5. UI RENDERING (CHIPS, VIDEO GRID, WATCH PAGE, SEARCH)
+     ********************************************************************/
+    function renderChips() {
+      const bar = document.getElementById("chipsBar");
+      bar.innerHTML = "";
+
+      CORE_CHIPS.forEach(chipName => {
+        const btn = document.createElement("button");
+        btn.className = `chip ${state.activeChip === chipName ? "active" : ""}`;
+        btn.textContent = chipName;
+        btn.addEventListener("click", () => {
+          state.activeChip = chipName;
+          renderChips();
+          if (state.activeVideo) closeWatchView();
+          renderFeed();
+        });
+        bar.appendChild(btn);
+      });
+
+      const divider = document.createElement("div");
+      divider.className = "chip-divider";
+      bar.appendChild(divider);
+
+      WHITELISTED_CHANNELS.forEach(ch => {
+        const chipId = `channel:${ch.key}`;
+        const btn = document.createElement("button");
+        btn.className = `chip ${state.activeChip === chipId ? "active" : ""}`;
+        btn.textContent = ch.shortName;
+        btn.addEventListener("click", () => {
+          state.activeChip = chipId;
+          renderChips();
+          if (state.activeVideo) closeWatchView();
+          renderFeed();
+        });
+        bar.appendChild(btn);
+      });
+    }
+
+    function getFilteredVideos() {
+      const q = state.searchQuery.trim().toLowerCase();
+      return state.videos.filter(video => {
+        // Double-check anti-Shorts rule at render time
+        if (video.durationSeconds <= 60 || /#shorts?\b/i.test(video.title)) return false;
+
+        // Chip filter
+        if (state.activeChip !== "All") {
+          if (state.activeChip.startsWith("channel:")) {
+            const key = state.activeChip.replace("channel:", "");
+            if (video.channelKey !== key) return false;
+          } else {
+            if (!video.tags || !video.tags.includes(state.activeChip)) return false;
+          }
+        }
+
+        // Search filter (strictly within whitelisted fetched videos)
+        if (q) {
+          const hay = `${video.title} ${video.channelTitle} ${video.fullChannelName} ${(video.tags || []).join(" ")}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+    }
+
+    function createVideoCardElement(video) {
+      const card = document.createElement("article");
+      card.className = "video-card";
+      const primaryBadge = (video.tags && video.tags[0]) || "Lecture";
+
+      card.innerHTML = `
+        <div class="thumb-wrap">
+          <img class="thumb-img" src="${escapeHtml(video.thumbnail)}" alt="${escapeHtml(video.title)}" loading="lazy" />
+          <span class="subject-tag-badge">${escapeHtml(primaryBadge)}</span>
+          <span class="duration-badge">${escapeHtml(video.durationText)}</span>
+        </div>
+        <div class="card-body">
+          <h3 class="video-title">${escapeHtml(video.title)}</h3>
+          <div class="video-meta">
+            <div class="channel-name">
+              <span>${escapeHtml(video.channelTitle)}</span>
+              <svg class="verified-dot" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.5-1.5 2.6 2.6 6.4-6.4 1.5 1.5-7.9 7.9z"/></svg>
+            </div>
+            <div class="stats-line">${escapeHtml(video.viewsText)} &bull; ${escapeHtml(formatRelativeDaysAgo(video.publishedAt))}</div>
+          </div>
+        </div>
+      `;
+      card.addEventListener("click", () => openWatchView(video));
+      return card;
+    }
+
+    function renderSkeletons() {
+      const grid = document.getElementById("videoGrid");
+      grid.innerHTML = "";
+      for (let i = 0; i < 6; i++) {
+        const sk = document.createElement("div");
+        sk.className = "skeleton-card";
+        sk.innerHTML = `
+          <div class="skeleton-thumb"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        `;
+        grid.appendChild(sk);
+      }
+    }
+
+    function renderFeed() {
+      const grid = document.getElementById("videoGrid");
+      grid.innerHTML = "";
+
+      const list = getFilteredVideos();
+      if (list.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        if (!state.apiKey) {
+          empty.innerHTML = `
+            <h3>Welcome to StudyTube</h3>
+            <p>Paste your YouTube Data API v3 key in Settings to load distraction-free JEE &amp; NEET lectures from Physics Wallah, Unacademy, Vedantu, ALLEN, and Motion.</p>
+            <button class="btn btn-primary" id="emptySetupKeyBtn">Configure YouTube API Key</button>
+          `;
+          grid.appendChild(empty);
+          document.getElementById("emptySetupKeyBtn")?.addEventListener("click", openSettingsModal);
+        } else {
+          empty.innerHTML = `
+            <h3>No Matching Whitelisted Lectures</h3>
+            <p>No full-length videos matched your current filter or search query. Try switching the chip to "All" or refreshing the feed.</p>
+            <button class="btn btn-secondary" id="emptyResetFilterBtn">Reset Filters</button>
+          `;
+          grid.appendChild(empty);
+          document.getElementById("emptyResetFilterBtn")?.addEventListener("click", () => {
+            state.activeChip = "All";
+            state.searchQuery = "";
+            document.getElementById("searchInput").value = "";
+            renderChips();
+            renderFeed();
+          });
+        }
+        return;
+      }
+
+      list.forEach(video => {
+        grid.appendChild(createVideoCardElement(video));
+      });
+    }
+
+    function openWatchView(video) {
+      state.activeVideo = video;
+      document.getElementById("feedView").style.display = "none";
+      const watchView = document.getElementById("watchView");
+      watchView.classList.add("active");
+
+      // Official YouTube Embedded IFrame Player ONLY
+      const embedUrl = `https://www.youtube.com/embed/${encodeURIComponent(video.id)}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+      document.getElementById("playerContainer").innerHTML = `
+        <iframe
+          src="${embedUrl}"
+          title="${escapeHtml(video.title)}"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      `;
+
+      const badgesHtml = (video.tags || [])
+        .map(t => `<span class="mini-badge">${escapeHtml(t)}</span>`)
+        .join("");
+
+      document.getElementById("watchInfo").innerHTML = `
+        <div class="watch-title">${escapeHtml(video.title)}</div>
+        <div class="watch-subrow">
+          <div>
+            <strong>${escapeHtml(video.fullChannelName || video.channelTitle)}</strong>
+            &bull; ${escapeHtml(video.viewsText)}
+            &bull; ${escapeHtml(formatRelativeDaysAgo(video.publishedAt))}
+            &bull; Duration: ${escapeHtml(video.durationText)}
+          </div>
+          <div class="watch-badges">${badgesHtml}</div>
+        </div>
+      `;
+
+      // Related videos strictly from whitelisted channels
+      const relatedGrid = document.getElementById("relatedGrid");
+      relatedGrid.innerHTML = "";
+      const related = state.videos
+        .filter(v => v.id !== video.id)
+        .sort((a, b) => {
+          const aScore = (a.channelKey === video.channelKey ? 2 : 0) +
+            (a.tags || []).filter(t => (video.tags || []).includes(t)).length;
+          const bScore = (b.channelKey === video.channelKey ? 2 : 0) +
+            (b.tags || []).filter(t => (video.tags || []).includes(t)).length;
+          return bScore - aScore;
+        })
+        .slice(0, 12);
+
+      related.forEach(rv => {
+        relatedGrid.appendChild(createVideoCardElement(rv));
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function closeWatchView() {
+      state.activeVideo = null;
+      document.getElementById("playerContainer").innerHTML = "";
+      document.getElementById("watchView").classList.remove("active");
+      document.getElementById("feedView").style.display = "block";
+    }
+
+    /********************************************************************
+     * 6. SETTINGS MODAL & WHITELIST PREVIEW
+     ********************************************************************/
+    function renderWhitelistPreview() {
+      const container = document.getElementById("whitelistPreview");
+      container.innerHTML = WHITELISTED_CHANNELS.map(ch => {
+        const cached = state.channelMap[ch.key];
+        const status = cached?.channelId ? `ID: ${cached.channelId}` : "Resolves on sync";
+        return `<div>&bull; <strong>${escapeHtml(ch.name)}</strong> <span style="color:var(--primary)">(${escapeHtml(status)})</span></div>`;
+      }).join("");
+    }
+
+    function openSettingsModal() {
+      document.getElementById("apiKeyInput").value = state.apiKey;
+      renderWhitelistPreview();
+      document.getElementById("settingsModal").classList.add("open");
+    }
+
+    function closeSettingsModal() {
+      document.getElementById("settingsModal").classList.remove("open");
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /********************************************************************
+     * 7. LIFECYCLE, AUTO-REFRESH (5 MIN + FOREGROUND), & EVENT LISTENERS
+     ********************************************************************/
+    function bindEvents() {
+      document.getElementById("homeBrandBtn").addEventListener("click", () => {
+        closeWatchView();
+      });
+
+      document.getElementById("backToFeedBtn").addEventListener("click", () => {
+        closeWatchView();
+      });
+
+      document.getElementById("studyTimerPill").addEventListener("click", () => {
+        state.timerRunning = !state.timerRunning;
+        persistStudyTimer();
+        renderStudyTimer();
+      });
+
+      document.getElementById("refreshFeedBtn").addEventListener("click", () => {
+        fetchAndFilterWhitelistedFeed(true);
+      });
+
+      document.getElementById("openSettingsBtn").addEventListener("click", openSettingsModal);
+      document.getElementById("closeSettingsBtn").addEventListener("click", closeSettingsModal);
+      document.getElementById("alertSettingsBtn").addEventListener("click", openSettingsModal);
+      document.getElementById("alertRetryBtn").addEventListener("click", () => fetchAndFilterWhitelistedFeed(true));
+
+      document.getElementById("saveApiKeyBtn").addEventListener("click", () => {
+        const val = document.getElementById("apiKeyInput").value.trim();
+        state.apiKey = val;
+        localStorage.setItem(STORAGE_KEYS.API_KEY, val);
+        closeSettingsModal();
+        fetchAndFilterWhitelistedFeed(true);
+      });
+
+      document.getElementById("clearCacheBtn").addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEYS.CHANNEL_MAP);
+        localStorage.removeItem(STORAGE_KEYS.VIDEO_CACHE);
+        localStorage.removeItem(STORAGE_KEYS.LAST_SYNC);
+        state.channelMap = {};
+        state.videos = [];
+        state.lastSync = 0;
+        renderWhitelistPreview();
+        renderFeed();
+        showFeedStatus("Cache cleared");
+      });
+
+      const searchInput = document.getElementById("searchInput");
+      const clearSearchBtn = document.getElementById("clearSearchBtn");
+      searchInput.addEventListener("input", e => {
+        state.searchQuery = e.target.value;
+        clearSearchBtn.style.display = state.searchQuery ? "block" : "none";
+        if (state.activeVideo) closeWatchView();
+        renderFeed();
+      });
+
+      clearSearchBtn.addEventListener("click", () => {
+        state.searchQuery = "";
+        searchInput.value = "";
+        clearSearchBtn.style.display = "none";
+        renderFeed();
+      });
+
+      // Auto-refresh every 5 minutes
+      setInterval(() => {
+        if (state.apiKey && !document.hidden) {
+          fetchAndFilterWhitelistedFeed(false);
+        }
+      }, AUTO_REFRESH_INTERVAL_MS);
+
+      // Auto-refresh when app comes to the foreground
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && state.apiKey) {
+          const elapsed = Date.now() - state.lastSync;
+          if (elapsed >= AUTO_REFRESH_INTERVAL_MS) {
+            fetchAndFilterWhitelistedFeed(false);
+          } else {
+            updateLastSyncLabel();
+          }
+        }
+      });
+    }
+
+    // Boot Application
+    (function init() {
+      initStudyTimer();
+      renderChips();
+      bindEvents();
+      renderFeed();
+      updateLastSyncLabel();
+
+      // Show Settings screen on first launch if no API key is saved
+      if (!state.apiKey) {
+        openSettingsModal();
+      } else {
+        // Instant load from localStorage cache, then refresh if stale (> 5 mins) or empty
+        if (state.videos.length === 0 || Date.now() - state.lastSync >= AUTO_REFRESH_INTERVAL_MS) {
+          fetchAndFilterWhitelistedFeed(false);
+        }
+      }
+    })();
+  </script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+</body>
+</html>
